@@ -10,9 +10,16 @@ class PersonTracker:
         self,
         model_path: str = "yolov8n-pose.pt",
         confidence: float = 0.5,
+        device=None,
+        tracker=None,
     ):
         self.model = YOLO(model_path)
         self.confidence = confidence
+        self.options = {}
+        if device is not None:
+            self.options["device"] = device
+        if tracker is not None:
+            self.options["tracker"] = tracker
 
     def track(self, frame):
         """
@@ -28,6 +35,7 @@ class PersonTracker:
             conf=self.confidence,
             classes=[0],
             verbose=False,
+            **self.options,
         )
 
         people = []

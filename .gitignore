@@ -2,3 +2,38 @@ venv/
 __pycache__/
 *.pyc
 .env
+tmp/flutter-sdk/
+tmp/flutter-sdk.zip
+tmp/flutter-releases.json
+tmp/pub-cache/
+tmp/android-sdk/
+tmp/gradle-home/
+tmp/android-tools.zip
+tmp/android-install*.log
+tmp/mobile-pub-get.log
+
+# Local Python environment
+.venv/
+venv/
+
+# Temporary SDKs and downloads
+tmp/
+
+# Generated output
+output/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Flutter generated files
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+
+# Local secrets
+.env
+.env.*
+!.env.example

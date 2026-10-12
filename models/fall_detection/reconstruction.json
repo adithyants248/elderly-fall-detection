@@ -1,0 +1,131 @@
+{
+  "origin": "Reconstructed from notebook Cell 6 and CSV; original median pickle unavailable",
+  "sources_sha256": {
+    "colab_reference\\Fall_Detection_Dataset.ipynb": "4a81899467511d82f77bf1149faab7411b74d41099eefbbf5a5b07986b90f8df",
+    "colab_reference\\UR_features_all.csv": "a5f4f2d189442dec5f3069b5b1a9891ff0fbd89ae6d64ec0447944a16aad3c22",
+    "colab_reference\\scaler.pkl": "c26a179a9b87937d57ac78cc743d90954e8c71cde26f2f47ffd98be96f1f28c5"
+  },
+  "splits": {
+    "train": [
+      "fall-15-cam0-rgb",
+      "adl-37-cam0-rgb",
+      "adl-25-cam0-rgb",
+      "fall-04-cam0-rgb",
+      "adl-05-cam0-rgb",
+      "fall-26-cam0-rgb",
+      "adl-02-cam0-rgb",
+      "adl-34-cam0-rgb",
+      "fall-27-cam0-rgb",
+      "fall-06-cam0-rgb",
+      "adl-26-cam0-rgb",
+      "fall-14-cam0-rgb",
+      "adl-32-cam0-rgb",
+      "adl-18-cam0-rgb",
+      "fall-22-cam0-rgb",
+      "adl-04-cam0-rgb",
+      "adl-06-cam0-rgb",
+      "adl-28-cam0-rgb",
+      "adl-07-cam0-rgb",
+      "adl-03-cam0-rgb",
+      "fall-19-cam0-rgb",
+      "adl-31-cam0-rgb",
+      "fall-07-cam0-rgb",
+      "adl-01-cam0-rgb",
+      "adl-36-cam0-rgb",
+      "adl-39-cam0-rgb",
+      "fall-01-cam0-rgb",
+      "fall-20-cam0-rgb",
+      "fall-08-cam0-rgb",
+      "adl-15-cam0-rgb",
+      "adl-19-cam0-rgb",
+      "adl-11-cam0-rgb",
+      "adl-08-cam0-rgb",
+      "fall-17-cam0-rgb",
+      "adl-12-cam0-rgb",
+      "fall-12-cam0-rgb",
+      "adl-35-cam0-rgb",
+      "fall-23-cam0-rgb",
+      "fall-03-cam0-rgb",
+      "fall-30-cam0-rgb",
+      "fall-21-cam0-rgb",
+      "fall-11-cam0-rgb",
+      "fall-05-cam0-rgb",
+      "fall-02-cam0-rgb",
+      "adl-21-cam0-rgb"
+    ],
+    "val": [
+      "adl-13-cam0-rgb",
+      "fall-09-cam0-rgb",
+      "fall-18-cam0-rgb",
+      "adl-16-cam0-rgb",
+      "fall-29-cam0-rgb",
+      "adl-20-cam0-rgb",
+      "adl-09-cam0-rgb",
+      "adl-24-cam0-rgb",
+      "fall-24-cam0-rgb"
+    ],
+    "test": [
+      "fall-10-cam0-rgb",
+      "fall-13-cam0-rgb",
+      "adl-17-cam0-rgb",
+      "fall-16-cam0-rgb",
+      "adl-29-cam0-rgb",
+      "fall-25-cam0-rgb",
+      "adl-10-cam0-rgb",
+      "fall-28-cam0-rgb",
+      "adl-33-cam0-rgb",
+      "adl-27-cam0-rgb",
+      "adl-14-cam0-rgb"
+    ]
+  },
+  "features": [
+    "shoulder_center_x",
+    "shoulder_center_y",
+    "hip_center_x",
+    "hip_center_y",
+    "knee_center_x",
+    "knee_center_y",
+    "ankle_center_x",
+    "ankle_center_y",
+    "torso_angle",
+    "bbox_width",
+    "bbox_height",
+    "aspect_ratio",
+    "person_confidence",
+    "hip_vertical_velocity",
+    "hip_vertical_acceleration",
+    "hip_horizontal_velocity",
+    "body_center_movement",
+    "torso_angle_change",
+    "aspect_ratio_change",
+    "person_detected"
+  ],
+  "window": 60,
+  "stride": 15,
+  "validation": {
+    "train": {
+      "shape": [
+        341,
+        60,
+        20
+      ],
+      "max_abs_error": 0.0
+    },
+    "val": {
+      "shape": [
+        64,
+        60,
+        20
+      ],
+      "max_abs_error": 0.0
+    },
+    "test": {
+      "shape": [
+        69,
+        60,
+        20
+      ],
+      "max_abs_error": 0.0
+    }
+  }
+}

@@ -1,18 +1,36 @@
-import cv2
-from ultralytics import YOLO
-
 from src.core.fall_detection.detector import FallDetector
-from src.core.fall_verification.verifier import FallVerifier
 
 
 MODEL_PATH = "models/pose/yolov8n-pose.pt"
 
 
+def display_status(track_id, detection):
+    """Build one per-person status line from the detector's actual result."""
+    state = (
+        "FALL CONFIRMED" if detection["fall_confirmed"]
+        else "FALL VERIFIED" if detection["fall_verified"]
+        else "FALL CANDIDATE" if detection["fall_candidate"]
+        else "NORMAL"
+    )
+    verification = detection["verification"]
+    inactivity = detection["inactivity"]
+    text = (
+        f"ID {track_id} {state} | "
+        f"V {verification['elapsed_seconds']:.1f}/{verification['verification_window_seconds']:.1f}s "
+        f"I {inactivity['elapsed_seconds']:.1f}/{inactivity['required_seconds']}s | "
+        f"{verification['reset_reason'] or (inactivity['reason'] if detection['fall_verified'] else verification['reason'])}"
+    )
+    return text
+
+
 def main():
+    import cv2
+    from ultralytics import YOLO
+
     model = YOLO(MODEL_PATH)
 
-    fall_detector = FallDetector()
-    fall_verifier = FallVerifier()
+    # Explicit duration: webcam FPS must not determine the stillness wait.
+    fall_detector = FallDetector(inactivity_seconds=2.0)
 
     camera = cv2.VideoCapture(0)
 
@@ -25,6 +43,8 @@ def main():
         if not success:
             break
 
+        fall_detector.cleanup_stale_tracks()
+
         results = model.track(
             frame,
             persist=True,
@@ -33,6 +53,7 @@ def main():
             verbose=False,
         )
 
+        status_row = 0
         for result in results:
 
             if result.boxes is None:
@@ -86,9 +107,26 @@ def main():
 
                 detection = fall_detector.analyze(person)
 
-                verification = fall_verifier.update(
-                    track_id,
-                    detection["score"],
+                # Temporary per-person debug output.
+                verification = detection["verification"]
+                print(
+                    f"ID: {track_id} | Score: {detection['score']:.2f} | "
+                    f"Candidate: {detection['fall_candidate']} | "
+                    f"Verified: {detection['fall_verified']} | "
+                    f"Inactive: {detection['post_fall_inactive']} | "
+                    f"Confirmed: {detection['fall_confirmed']} | "
+                    f"Active: {verification['verification_active']} | "
+                    f"Start: {verification['verification_start_time']} | "
+                    f"Elapsed: {verification['elapsed_verification_seconds']:.3f}s | "
+                    f"Window: {verification['verification_window_seconds']:.2f}s | "
+                    f"Timestamp: {verification['timestamp']:.3f} | "
+                    f"Gap: {verification['observation_gap_seconds']} | "
+                    f"Lying: {verification['lying']} | "
+                    f"Reason: {verification['reason']} | "
+                    f"Reset: {verification['reset_reason']} | "
+                    f"Still: {detection['inactivity']['elapsed_seconds']:.2f}s | "
+                    f"Movement: {detection['inactivity']['movement']:.2f}px | "
+                    f"Inactivity reason: {detection['inactivity']['reason']}"
                 )
 
                 # ------------------------------------------------
@@ -109,27 +147,31 @@ def main():
                 # DISPLAY INFORMATION
                 # ------------------------------------------------
 
-                label = (
-                    f"ID {track_id} "
-                    f"Fall: {detection['score']:.2f}"
-                )
+                label = display_status(track_id, detection)
+                color = (0, 0, 255) if detection["fall_confirmed"] else (0, 255, 0)
+                scale = 0.5
+                text_width = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, scale, 1)[0][0]
+                scale *= min(1.0, (frame.shape[1] - 20) / max(text_width, 1))
+                row_y = 22 + status_row * 28
+                status_row += 1
+                cv2.rectangle(frame, (0, row_y - 20), (frame.shape[1], row_y + 5), (0, 0, 0), -1)
 
                 cv2.putText(
                     frame,
                     label,
-                    (x1, max(y1 - 10, 20)),
+                    (10, row_y),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6,
-                    (0, 255, 0),
-                    2,
+                    scale,
+                    color,
+                    1,
                 )
 
-                if verification["confirmed"]:
+                if detection["fall_confirmed"]:
 
                     cv2.putText(
                         frame,
-                        "FALL CONFIRMED",
-                        (50, 50),
+                        f"ID {track_id}: FALL CONFIRMED",
+                        (10, min(frame.shape[0] - 10, y2)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         1.0,
                         (0, 0, 255),
